@@ -1,40 +1,55 @@
 #!/bin/bash
 
-# Define the file paths
-BASHRC_FILE="${HOME}/.bashrc"
-TASKS_FILE="/app/tasks.md"
-COMPLETED_FILE="/app/Completed.md"
+# Define constant for tasks file path
+TASKS="/app/tasks.txt"
+BASH_HISTORY="$HOME/.bash_history"
 
-# Check if .bashrc exists
-if [ ! -f "$BASHRC_FILE" ]; then
-    echo "Error: .bashrc file not found."
+# Check if tasks file exists
+if [ ! -f "$TASKS" ]; then
+    echo "$TASKS does not exist!"
     exit 1
 fi
 
-# Check if tasks.md exists
-if [ ! -f "$TASKS_FILE" ]; then
-    echo "Error: tasks.md file not found."
+# Check if bash history file exists
+if [ ! -f "$BASH_HISTORY" ]; then
+    echo "$BASH_HISTORY does not exist!"
     exit 1
 fi
 
-# Initialize the Completed.md file
-echo "" >"$COMPLETED_FILE"
+# Initialize variables
+line_count=0
+unfinished_tasks=""
+completed_tasks=""
 
-# Iterate through each line in .bashrc
-while IFS= read -r line; do
-    # Check if line matches the pattern
-    if grep -q "$line" "$TASKS_FILE"; then
-        # Get the task number
-        task_number=$(grep -n "$line" "$TASKS_FILE" | cut -d':' -f1)
-        # Check if the task is already marked as completed
-        if grep -q "\[$task_number\] \[x\]" "$COMPLETED_FILE"; then
-            echo "Task $task_number already completed."
-        else
-            # Mark the task as completed in Completed.md
-            echo "- [x] Task $task_number $(sed -n "${task_number}p" "$TASKS_FILE") completed" >>"$COMPLETED_FILE"
+# Read command history from ~/.bash_history
+IFS=$'\n' history_commands=($(cat "$BASH_HISTORY"))
+
+# Loop through tasks file
+while IFS= read -r task; do
+    ((line_count++))
+    task=$(echo "$task" | sed 's/^\s*//;s/\s*$//')  # Remove leading/trailing whitespace
+
+    # Check if task is in command history
+    found=false
+    for cmd in "${history_commands[@]}"; do
+        if [[ "$cmd" == *"$task"* ]]; then
+            found=true
+            break
         fi
-    fi
-done <"$BASHRC_FILE"
+    done
 
-echo "Completed tasks:"
-cat "$COMPLETED_FILE"
+    if $found; then
+        completed_tasks+=" - [x] Task $line_count >$task< completed\n"
+    else
+        unfinished_tasks+=" - [ ] Task $line_count  open\n"
+    fi
+done < "$TASKS"
+
+# Output to completed.md
+echo -e "$completed_tasks"
+
+# Output unfinished tasks
+if [ -n "$unfinished_tasks" ]; then
+    echo "Unfinished Tasks:"
+    echo -e "$unfinished_tasks"
+fi
