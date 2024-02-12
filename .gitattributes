@@ -1,0 +1,15 @@
+# Auto-detect text files and perform LF normalization
+* text=auto
+
+# Visual Studio Code specific
+*.code-workspace eol=lf
+
+# EditorConfig specific
+.editorconfig eol=lf
+
+# Docker specific
+.dockerignore eol=lf
+docker-compose.override.yml eol=lf
+
+# Include .gitkeep files in empty directories
+**/**/**/**/**/.gitkeep !/.gitignore

@@ -1,0 +1,41 @@
+# OS-specific files
+.DS_Store
+Thumbs.db
+
+# Visual Studio Code specific files
+.vscode/
+*.code-workspace
+
+# Vim specific files
+*.swp
+
+# Environment files
+.sec.*.env
+
+# EditorConfig file
+.editorconfig
+
+# Docker specific files
+.dockerignore
+docker-compose.override.yml
+.docker/
+
+# Node.js specific files
+node_modules/
+
+# Compiled Python files
+*.pyc
+
+# Logs
+*.log
+
+# Temporary files
+*~
+
+# Package files
+*.zip
+*.tar.gz
+*.rar
+
+# Ignore all files in the root .gitignore
+!/.gitignore
