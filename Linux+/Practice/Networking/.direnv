@@ -1,0 +1,4 @@
+# .direnv
+alias start="docker compose up -d && docker compose exec powerstation bash"
+alias validate="docker compose exec powerstation validate"
+alias finish="validate && docker compose down && sleep 2 && docker image rm $(docker image ls | grep powerstation | awk '{print $1}')"

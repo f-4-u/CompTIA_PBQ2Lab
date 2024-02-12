@@ -1,0 +1,11 @@
+version: "3"
+
+services:
+  powerstation:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    hostname: ${HOSTNAME}
+    container_name: ${NAME}
+    volumes:
+      - ./README.md:/tasks/README.md
